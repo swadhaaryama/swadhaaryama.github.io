@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FitTrack Pro — Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- SIGN-IN -->
+<div id="signinPage" class="signin-page">
+  <div class="signin-card card">
+    <h1>FitTrack Pro</h1>
+    <p class="muted">Sign in to continue</p>
+
+    <label>Username</label>
+    <input id="loginUser" type="text" placeholder="Enter username">
+
+    <label>Password</label>
+    <input id="loginPass" type="password" placeholder="Enter password">
+
+    <!-- FIX: ADDED MISSING FILE UPLOAD -->
+    <label>Upload Profile Photo (optional)</label>
+    <input id="loginUpload" type="file" accept="image/*">
+
+    <button id="loginBtn" class="primary-btn">Sign In</button>
+
+    <div id="loginError" class="inline-error" style="display:none">
+      Invalid username or password
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboardWrapper" style="display:none">
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="brand">
+        <div class="logo">FT</div>
+        <strong>FitTrack</strong>
+      </div>
+
+      <nav class="side-nav">
+        <button class="nav-item active" data-page="stats">Statistics</button>
+        <button class="nav-item" data-page="activity">Activity Log</button>
+        <button class="nav-item" data-page="meals">Meal Planner</button>
+        <button class="nav-item" data-page="insights">Insights</button>
+
+        <div style="flex:1"></div>
+
+        <button id="toggleStorage" class="nav-item">Use sessionStorage</button>
+        <button id="resetBtn" class="nav-item">Reset Dashboard</button>
+      </nav>
+
+      <!-- SMALL SETTINGS BOX (OPTION C) -->
+      <div class="card" style="margin-top:20px;padding:14px;">
+        <h4 style="margin-top:0">Change Photo</h4>
+
+        <div id="settingsAvatarPreview" class="avatar-preview">No Photo</div>
+
+        <input type="file" id="settingsPhotoInput" accept="image/*" style="margin-top:8px">
+        <button id="settingsSavePhoto" class="btn" style="margin-top:8px">Upload</button>
+      </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <header class="header">
+        <div>
+          <div class="title">Daily Wellness Overview</div>
+          <div class="muted">Track your progress and achievements</div>
+        </div>
+
+        <div class="profile">
+          <div id="headerAvatar"
+               style="width:40px;height:40px;border-radius:50%;background:#eef2f7;
+                      display:flex;align-items:center;justify-content:center;font-weight:700;color:#334;overflow:hidden">
+             U
+          </div>
+          <div id="headerName" style="font-weight:600">User</div>
+        </div>
+      </header>
+
+      <!-- STATS PAGE -->
+      <section id="page_stats" class="page">
+        <div class="grid grid-3">
+
+          <article class="card stat-card">
+            <div class="stat-title">Steps</div>
+            <div class="stat-value highlight" id="stepsValue">4200</div>
+            <div class="stat-small muted">Goal: <span id="stepsGoal">10000</span></div>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-title">Calories Burned</div>
+            <div class="stat-value" id="calValue">210 kcal</div>
+            <div class="stat-small muted">Target: <span id="calGoal">500</span></div>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-title">Water Intake (ml)</div>
+            <div class="stat-value" id="waterValue">900 ml</div>
+            <div class="stat-small muted">Goal: <span id="waterGoal">2000</span></div>
+          </article>
+
+        </div>
+
+        <div class="card chart-card" style="margin-top:18px">
+          <div class="card-header">
+            <h3>Weekly Activity (minutes)</h3>
+            <div class="muted">This Week</div>
+          </div>
+          <div id="weeklyActivity" class="circleCharts"></div>
+        </div>
+
+        <div class="card chart-card" style="margin-top:18px">
+          <div class="card-header">
+            <h3>Weekly Calories (kcal)</h3>
+            <div class="muted">This Week</div>
+          </div>
+          <div id="weeklyCalories" class="circleCharts"></div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY PAGE -->
+      <section id="page_activity" class="page" style="display:none">
+        <div class="grid grid-2">
+
+          <div class="card activity-list">
+            <div class="filters">
+              <button class="filterBtn active" data-filter="all">All</button>
+              <button class="filterBtn" data-filter="morning">Morning</button>
+              <button class="filterBtn" data-filter="afternoon">Afternoon</button>
+              <button class="filterBtn" data-filter="evening">Evening</button>
+            </div>
+            <div id="activityList"></div>
+          </div>
+
+          <div class="card">
+            <h3>Add Activity</h3>
+
+            <form id="addActivityForm" novalidate>
+              <label>Activity Name</label>
+              <input id="actName" type="text" required>
+
+              <div class="row">
+                <div style="flex:1">
+                  <label>Duration (mins)</label>
+                  <input id="actDuration" type="number" min="1" max="300" required>
+                  <div id="errDuration" class="inline-error">Invalid</div>
+                </div>
+
+                <div style="flex:1">
+                  <label>Calories</label>
+                  <input id="actCalories" type="number" min="0" max="5000" required>
+                  <div id="errCalories" class="inline-error">Invalid</div>
+                </div>
+              </div>
+
+              <label>Time</label>
+              <select id="actTimeOfDay">
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="evening">Evening</option>
+              </select>
+
+              <div id="errName" class="inline-error">Enter a name</div>
+
+              <button type="submit" class="btn" style="margin-top:12px">Add</button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- MEALS PAGE -->
+      <section id="page_meals" class="page" style="display:none">
+        <div class="meals">
+          <div class="meal card">
+            <h4>Breakfast</h4>
+            <ul id="breakfastList"></ul>
+            <div class="row"><input id="bfName"><input id="bfCal" type="number"></div>
+            <button id="addBreakfast" class="btn">Add</button>
+            <div id="errBf" class="inline-error"></div>
+          </div>
+
+          <div class="meal card">
+            <h4>Lunch</h4>
+            <ul id="lunchList"></ul>
+            <div class="row"><input id="lnName"><input id="lnCal" type="number"></div>
+            <button id="addLunch" class="btn">Add</button>
+            <div id="errLn" class="inline-error"></div>
+          </div>
+
+          <div class="meal card">
+            <h4>Dinner</h4>
+            <ul id="dinnerList"></ul>
+            <div class="row"><input id="dnName"><input id="dnCal" type="number"></div>
+            <button id="addDinner" class="btn">Add</button>
+            <div id="errDn" class="inline-error"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4>Daily Calories</h4>
+          <div class="muted">Total: <strong id="dailyCalories">0</strong> kcal</div>
+        </div>
+      </section>
+
+      <!-- INSIGHTS -->
+      <section id="page_insights" class="page" style="display:none">
+        <div class="card">
+          <h3>Insights & Summary</h3>
+          <button id="downloadSummary" class="btn" style="margin-top:12px">Download</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div id="modalMessage"></div>
+    <button id="closeModal" class="btn" style="margin-top:8px">Close</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
